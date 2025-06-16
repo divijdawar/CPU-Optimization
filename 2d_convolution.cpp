@@ -6,9 +6,9 @@
 using namespace std; 
 
 void convolution2D( 
-    const float* input, 
-    const float* kernel, 
-    float* output, 
+    const float* __restrict__ input, 
+    const float* __restrict__ kernel, 
+    float* __restrict__ output, 
     int input_rows, 
     int input_cols, 
     int kernel_rows, 
@@ -17,7 +17,7 @@ void convolution2D(
     int output_rows = input_rows - kernel_rows + 1;
     int output_cols = input_cols - kernel_cols + 1; 
 
-    // 8.5 gflops for now
+    // 11.5 gflops for now
     #pragma omp parallel for collapse(4)
     for (int i = 0; i < output_rows; i++) { 
         for (int j = 0; j < output_cols; j++) { 
@@ -54,7 +54,7 @@ int main() {
     const int output_cols = input_cols - kernel_cols + 1;
     float output[output_rows * output_cols]; 
 
-    long long flops = (long long)input_rows * input_cols * kernel_rows * kernel_cols * 2; 
+    long long flops = (long long)output_rows * output_cols * kernel_rows * kernel_cols * 2; 
     
     auto start = std::chrono::high_resolution_clock::now();
     
